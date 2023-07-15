@@ -1,0 +1,6 @@
+ext.versions = [
+
+        citrus           : "3.4.0",
+        slf4j            : "2.0.7",
+        lombok           : "1.18.28",
+]
