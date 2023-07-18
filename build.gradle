@@ -24,8 +24,8 @@ dependencies {
     testImplementation "org.slf4j:cslf4j-reload4j:${versions.slf4j}"
 
     // Сокращение кода -> Lombok
-    testCompileOnly "corg.projectlombok:lombok:${versions.lombok}"
-    testAnnotationProcessor "corg.projectlombok:lombok:${versions.lombok}"
+    testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
+    testAnnotationProcessor "org.projectlombok:lombok:${versions.lombok}"
 }
 
 test {
