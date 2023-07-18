@@ -40,7 +40,7 @@ public class DuckCrudClient extends TestNGCitrusSpringSupport {
         );
     }
 
-    public void getAllIds(TestCaseRunner runner, String id) {
+    public void getAllIds(TestCaseRunner runner) {
         runner.$(http().client(duckService)
                 .send()
                 .get("/api/duck/getAllIds")
