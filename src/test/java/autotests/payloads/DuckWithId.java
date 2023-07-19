@@ -6,23 +6,8 @@ import lombok.experimental.Accessors;
 
 @Setter
 @Accessors(fluent = true)
-public class DuckWithId {
-
-    @JsonProperty
-    private String color;
-
-    @JsonProperty
-    private Double height;
+public class DuckWithId extends Duck {
 
     @JsonProperty
     private Integer id;
-
-    @JsonProperty
-    private String material;
-
-    @JsonProperty
-    private String sound;
-
-    @JsonProperty
-    private String wingsState;
 }
