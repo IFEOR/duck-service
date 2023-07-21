@@ -66,36 +66,22 @@ public class DuckCrudClient extends TestNGCitrusSpringSupport {
         );
     }
 
-    //region create - валидация
+    //region Валидация
 
     @Description("Валидация полученного ответа String'ой")
-    public void validateResponse(TestCaseRunner runner,
-                                 String color,
-                                 String height,
-                                 String id,
-                                 String material,
-                                 String sound,
-                                 String wingsState
-    ) {
+    public void validateResponseByString(TestCaseRunner runner, String body) {
         runner.$(http()
                 .client(duckService)
                 .receive()
                 .response(HttpStatus.OK)
                 .message()
                 .type(MessageType.JSON)
-                .body("{\n" +
-                        "  \"color\": \"" + color + "\",\n" +
-                        "  \"height\": " + height + ",\n" +
-                        "  \"id\": " + id + ",\n" +
-                        "  \"material\": \"" + material + "\",\n" +
-                        "  \"sound\": \"" + sound + "\",\n" +
-                        "  \"wingsState\": \"" + wingsState + "\"\n" +
-                        "}")
+                .body(body)
         );
     }
 
     @Description("Валидация полученного ответа из папки Resources")
-    public void validateResponse(TestCaseRunner runner, String expectedPayload) {
+    public void validateResponseByResource(TestCaseRunner runner, String expectedPayload) {
         runner.$(http()
                 .client(duckService)
                 .receive()
@@ -107,7 +93,7 @@ public class DuckCrudClient extends TestNGCitrusSpringSupport {
     }
 
     @Description("Валидация полученного ответа из папки Payload")
-    public void validateResponse(TestCaseRunner runner, Object expectedPayload) {
+    public void validateResponseByPayload(TestCaseRunner runner, Object expectedPayload) {
         runner.$(http()
                 .client(duckService)
                 .receive()
