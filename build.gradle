@@ -21,7 +21,7 @@ dependencies {
     testImplementation "com.consol.citrus:citrus-validation-json:${versions.citrus}"
 
     // Логирование -> SLF4J
-    testImplementation "org.slf4j:cslf4j-reload4j:${versions.slf4j}"
+    testImplementation "org.slf4j:slf4j-reload4j:${versions.slf4j}"
 
     // Сокращение кода -> Lombok
     testCompileOnly "org.projectlombok:lombok:${versions.lombok}"
