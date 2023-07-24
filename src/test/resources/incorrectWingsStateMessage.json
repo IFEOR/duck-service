@@ -1,0 +1,6 @@
+{
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Incorrect wingsState value",
+  "path": "/api/duck/create"
+}

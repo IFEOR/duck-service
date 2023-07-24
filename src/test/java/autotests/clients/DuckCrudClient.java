@@ -1,7 +1,6 @@
 package autotests.clients;
 
 import autotests.BaseTest;
-import autotests.payloads.Duck;
 import com.consol.citrus.TestCaseRunner;
 
 public class DuckCrudClient extends BaseTest {
@@ -16,8 +15,8 @@ public class DuckCrudClient extends BaseTest {
                 "}");
     }
 
-    public void create(TestCaseRunner runner, Duck duck) {
-        sendPostRequest(runner, "/api/duck/create", duck);
+    public void create(TestCaseRunner runner, Object payload) {
+        sendPostRequest(runner, "/api/duck/create", payload);
     }
 
     public void getAllIds(TestCaseRunner runner) {

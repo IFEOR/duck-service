@@ -109,6 +109,19 @@ public class BaseTest extends TestNGCitrusSpringSupport {
         );
     }
 
+    @Description("Валидация полученного ответа String'ой")
+    protected void validateResponseByStringWithIdExtraction(TestCaseRunner runner, HttpStatus status, String body) {
+        runner.$(http()
+                .client(duckService)
+                .receive()
+                .response(status)
+                .message()
+                .type(MessageType.JSON)
+                .extract(fromBody().expression("$.id", "id"))
+                .body(body)
+        );
+    }
+
     @Description("Валидация полученного ответа из папки Resources")
     protected void validateResponse(TestCaseRunner runner, HttpStatus status, String expectedPayload) {
         runner.$(http()
