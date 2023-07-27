@@ -16,63 +16,67 @@ public class UpdateTest extends DuckCrudClient {
     @CitrusTest
     public void updatedToWood(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault);
-        extractIdFromResponse(runner);
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
         update(runner,
-                "${id}",
+                "${duckId}",
                 duckDefault.color(),
                 String.valueOf(duckDefault.height()),
                 "wood",
                 duckDefault.sound(),
                 duckDefault.wingsState());
-        validateResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "Duck with id = ${id} is updated"));
+        validateResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "Duck with id = ${duckId} is updated"));
+        validateDuckInDatabase(runner, "${duckId}", duckDefault.material("wood"));
     }
 
     @Test(description = "Проверка, что уточка с валидными свойствами не обновляет звук на невалидный", priority = 2)
     @CitrusTest
     public void notUpdatedIncorrectSound(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault);
-        extractIdFromResponse(runner);
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
         update(runner,
-                "${id}",
+                "${duckId}",
                 duckDefault.color(),
                 String.valueOf(duckDefault.height()),
                 duckDefault.material(),
                 "meow",
                 duckDefault.wingsState());
         validateResponse(runner, HttpStatus.BAD_REQUEST, "incorrectSoundMessage.json");
+        validateDuckInDatabase(runner, "${duckId}", duckDefault.sound("meow"));
     }
 
     @Test(description = "Проверка, что уточка с валидными свойствами может стать немой", priority = 2)
     @CitrusTest
     public void updatedEmptySound(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault);
-        extractIdFromResponse(runner);
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
         update(runner,
-                "${id}",
+                "${duckId}",
                 duckDefault.color(),
                 String.valueOf(duckDefault.height()),
                 duckDefault.material(),
                 "",
                 duckDefault.wingsState());
-        validateResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "Duck with id = ${id} is updated"));
+        validateResponse(runner, HttpStatus.OK, jsonPath().expression("$.message", "Duck with id = ${duckId} is updated"));
+        validateDuckInDatabase(runner, "${duckId}", duckDefault.sound(""));
     }
 
     @Test(description = "Проверка, что уточка с валидными свойствами не может стать нулевой высоты", priority = 2)
     @CitrusTest
     public void notUpdatedZeroHeight(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault);
-        extractIdFromResponse(runner);
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
         update(runner,
-                "${id}",
+                "${duckId}",
                 duckDefault.color(),
                 "0.0",
                 duckDefault.material(),
                 duckDefault.sound(),
                 duckDefault.wingsState());
         validateResponse(runner, HttpStatus.BAD_REQUEST, "incorrectHeightMessage.json");
+        validateDuckInDatabase(runner, "${duckId}", duckDefault.height(0.0));
     }
 }

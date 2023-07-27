@@ -15,9 +15,9 @@ public class PropertiesTest extends DuckActionClient {
     @CitrusTest
     public void propertiesDefault(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault);
-        extractIdFromResponse(runner);
-        properties(runner, "${id}");
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
+        properties(runner, "${duckId}");
         validateResponse(runner, HttpStatus.OK, duckDefault);
     }
 
@@ -26,9 +26,9 @@ public class PropertiesTest extends DuckActionClient {
     @CitrusTest
     public void propertiesWoodMaterial(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckWood);
-        extractIdFromResponse(runner);
-        properties(runner, "${id}");
+        createTestDuck(runner, duckWood);
+        extractLastCreatedDuckId(runner, "duckId");
+        properties(runner, "${duckId}");
         validateResponse(runner, HttpStatus.OK, duckWood);
     }
 }

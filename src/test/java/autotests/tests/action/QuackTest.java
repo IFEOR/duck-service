@@ -16,9 +16,9 @@ public class QuackTest extends DuckActionClient {
     @CitrusTest
     public void quackDefault(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault);
-        extractIdFromResponse(runner);
-        quack(runner, "${id}", "1", "1");
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
+        quack(runner, "${duckId}", "1", "1");
         validateResponse(runner, HttpStatus.OK, "quackDuckTest/quackSingle.json");
     }
 
@@ -26,9 +26,9 @@ public class QuackTest extends DuckActionClient {
     @CitrusTest
     public void quackFewRepetitions(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault);
-        extractIdFromResponse(runner);
-        quack(runner, "${id}", "5", "1");
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
+        quack(runner, "${duckId}", "5", "1");
         validateResponse(runner, HttpStatus.OK, "quackDuckTest/quackFewRepetitions.json");
     }
 
@@ -36,9 +36,9 @@ public class QuackTest extends DuckActionClient {
     @CitrusTest
     public void quackFewSounds(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault);
-        extractIdFromResponse(runner);
-        quack(runner, "${id}", "1", "5");
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
+        quack(runner, "${duckId}", "1", "5");
         validateResponse(runner, HttpStatus.OK, "quackDuckTest/quackFewSounds.json");
     }
 
@@ -46,9 +46,9 @@ public class QuackTest extends DuckActionClient {
     @CitrusTest
     public void quackMuteDuck(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, duckDefault.sound(""));
-        extractIdFromResponse(runner);
-        quack(runner, "${id}", "1", "1");
+        createTestDuck(runner, duckDefault.sound(""));
+        extractLastCreatedDuckId(runner, "duckId");
+        quack(runner, "${duckId}", "1", "1");
         validateResponse(runner, HttpStatus.OK, "quackDuckTest/quackEmpty.json");
     }
 }

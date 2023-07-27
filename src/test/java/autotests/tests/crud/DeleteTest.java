@@ -16,9 +16,9 @@ public class DeleteTest extends DuckCrudClient {
     @CitrusTest
     public void deleteExist(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
-        create(runner, "yellow", "5.00", "rubber", "quack", "ACTIVE");
-        extractIdFromResponse(runner);
-        delete(runner, "${id}");
+        createTestDuck(runner, duckDefault);
+        extractLastCreatedDuckId(runner, "duckId");
+        delete(runner, "${duckId}");
         validateResponse(runner, HttpStatus.OK, "deleteDuckTest/deleteExist.json");
     }
 }
