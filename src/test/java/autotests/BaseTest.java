@@ -16,8 +16,12 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.consol.citrus.DefaultTestActionBuilder.action;
+import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
+import static com.consol.citrus.actions.ExecuteSQLQueryAction.Builder.query;
 import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 import static com.consol.citrus.validation.DelegatingPayloadVariableExtractor.Builder.fromBody;
@@ -31,6 +35,8 @@ public class BaseTest extends TestNGCitrusSpringSupport {
 
     @Autowired
     protected SingleConnectionDataSource testDatabase;
+
+    protected AtomicInteger uniqueId = new AtomicInteger(0);
 
     protected Duck duckDefault = new Duck().color("yellow").height(5.0).material("rubber").sound("quack").wingsState("ACTIVE");
     protected Duck duckWood = new Duck().color("yellow").height(5.0).material("wood").sound("quack").wingsState("ACTIVE");
@@ -122,7 +128,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
                 .response(status)
                 .message()
                 .type(MessageType.JSON)
-                .extract(fromBody().expression("$.id", "id"))
+                .extract(fromBody().expression("$.id", "duckId"))
                 .body(body)
         );
     }
@@ -146,7 +152,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
                 .response(status)
                 .message()
                 .type(MessageType.JSON)
-                .extract(fromBody().expression("$.id", "id"))
+                .extract(fromBody().expression("$.id", "duckId"))
                 .body(new ClassPathResource(expectedPayload))
         );
     }
@@ -180,7 +186,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
     //region Экстракторы
 
     protected void extractIdFromResponse(TestCaseRunner runner) {
-        extractDataFromResponse(runner, "$.id", "id");
+        extractDataFromResponse(runner, "$.id", "duckId");
     }
 
     protected void extractDuckPropertiesFromResponse(TestCaseRunner runner) {
@@ -212,21 +218,64 @@ public class BaseTest extends TestNGCitrusSpringSupport {
 
     //endregion
 
+    protected void getId(TestCaseRunner runner) {
+        runner.$(query(testDatabase)
+                .statement("SELECT * FROM DUCK ORDER BY id DESC")
+                .extract("id", "maxId")
+        );
+        runner.$(action(context -> {
+            uniqueId.set(Integer.parseInt(context.getVariable("${maxId}")));
+        }));
+    }
+
+    protected void createTestDuck(TestCaseRunner runner, Duck duck) {
+        if (uniqueId.get() == 0) getId(runner);
+        runner.$(sql(testDatabase)
+                .statement("INSERT INTO DUCK (id, color, height, material, sound, wings_State) \n" +
+                        "\tVALUES (" +
+                        uniqueId.addAndGet(1) + ", '" +
+                        duck.color() + "', " +
+                        duck.height() + ", '" +
+                        duck.material() + "', '" +
+                        duck.sound() + "', '" +
+                        duck.wingsState() + "');\n")
+        );
+    }
+
+    protected void extractLastCreatedDuckId(TestCaseRunner runner, String variableName) {
+        runner.$(query(testDatabase)
+                .statement("SELECT id FROM duck WHERE id = " + uniqueId.get())
+                .extract("id", variableName)
+        );
+    }
+
+
     protected void finallyDuckDelete(TestCaseRunner runner) {
-        runner.variable("${id}", "");
-        runner.$(doFinally().actions(runner.$(http().client(duckService)
-                .send()
-                .delete("/api/duck/delete")
-                .queryParam("id", "${id}")))
+        runner.variable("${duckId}", "0");
+        runner.$(doFinally().actions(runner.$(sql(testDatabase)
+                .statement("DELETE FROM DUCK WHERE id = ${duckId}")))
         );
     }
 
     protected void finallyDuckDelete(TestCaseRunner runner, String variableName) {
-        runner.variable(variableName, "");
-        runner.$(doFinally().actions(runner.$(http().client(duckService)
-                .send()
-                .delete("/api/duck/delete")
-                .queryParam("id", variableName)))
+        runner.variable(variableName, "0");
+        runner.$(doFinally().actions(runner.$(sql(testDatabase)
+                .statement("DELETE FROM duck WHERE id = " + variableName)))
+        );
+    }
+
+    protected void CleanDB(TestCaseRunner runner) {
+        runner.$(sql(testDatabase).statement("DELETE FROM DUCK"));
+    }
+
+    protected void validateDuckInDatabase(TestCaseRunner runner, String id, Duck duck) {
+        runner.$(query(testDatabase)
+                .statement("SELECT * FROM duck WHERE id = " + id)
+                .validate("COLOR", duck.color())
+                .validate("HEIGHT", String.valueOf(duck.height()))
+                .validate("MATERIAL", duck.material())
+                .validate("SOUND", duck.sound())
+                .validate("WINGS_STATE", duck.wingsState())
         );
     }
 }
