@@ -33,21 +33,18 @@ public class GetAllIdsTest extends DuckCrudClient {
     @Test(description = "Проверка, что отображается список нескольких уточек", priority = 1)
     @CitrusTest
     public void getFewIdsTest(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            CleanDB(runner);
-            create(runner, duckDefault);
-            extractDataFromResponse(runner, "$.id", "id1");
-            create(runner, duckDefault);
-            extractDataFromResponse(runner, "$.id", "id2");
-            create(runner, duckDefault);
-            extractDataFromResponse(runner, "$.id", "id3");
-            getAllIds(runner);
-            validateResponseByString(runner, HttpStatus.OK, "[${id1},${id2},${id3}]");
-        } finally {
-            delete(runner, "${id1}");
-            delete(runner, "${id2}");
-            delete(runner, "${id3}");
-        }
+        finallyDuckDelete(runner, "${id1}");
+        finallyDuckDelete(runner, "${id2}");
+        finallyDuckDelete(runner, "${id3}");
+        CleanDB(runner);
+        create(runner, duckDefault);
+        extractDataFromResponse(runner, "$.id", "id1");
+        create(runner, duckDefault);
+        extractDataFromResponse(runner, "$.id", "id2");
+        create(runner, duckDefault);
+        extractDataFromResponse(runner, "$.id", "id3");
+        getAllIds(runner);
+        validateResponseByString(runner, HttpStatus.OK, "[${id1},${id2},${id3}]");
     }
 
     @Test(description = "Проверка, что отображается список с одной уточкой",
@@ -55,15 +52,12 @@ public class GetAllIdsTest extends DuckCrudClient {
             invocationCount = 2)
     @CitrusTest
     public void getIdTest(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            CleanDB(runner);
-            create(runner, duckDefault);
-            extractIdFromResponse(runner);
-            getAllIds(runner);
-            validateResponseByString(runner, HttpStatus.OK, "[${id}]");
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        CleanDB(runner);
+        create(runner, duckDefault);
+        extractIdFromResponse(runner);
+        getAllIds(runner);
+        validateResponseByString(runner, HttpStatus.OK, "[${id}]");
     }
 
     @Test(description = "Проверка, что отображается пустой список при отсутствии уточек", priority = 1)

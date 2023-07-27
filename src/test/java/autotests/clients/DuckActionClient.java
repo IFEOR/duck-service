@@ -2,6 +2,7 @@ package autotests.clients;
 
 import autotests.BaseTest;
 import autotests.payloads.Duck;
+import com.consol.citrus.TestAction;
 import com.consol.citrus.TestCaseRunner;
 
 public class DuckActionClient extends BaseTest {
@@ -21,16 +22,6 @@ public class DuckActionClient extends BaseTest {
 
     public void swim(TestCaseRunner runner, String id) {
         sendGetRequest(runner, "/api/duck/action/swim", "id", id);
-    }
-
-    public void create(TestCaseRunner runner, String color, String height, String material, String sound, String wingsState) {
-        sendPostRequest(runner, "/api/duck/create", "{\n" +
-                "  \"color\": \"" + color + "\",\n" +
-                "  \"height\": " + height + ",\n" +
-                "  \"material\": \"" + material + "\",\n" +
-                "  \"sound\": \"" + sound + "\",\n" +
-                "  \"wingsState\": \"" + wingsState + "\"\n" +
-                "}");
     }
 
     public void create(TestCaseRunner runner, Duck duck) {

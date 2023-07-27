@@ -13,13 +13,10 @@ public class SwimTest extends DuckActionClient {
     @Test(description = "Проверка, что уточка с валидным id (существующая в БД уточка) плывёт", priority = 1)
     @CitrusTest
     public void swimValidId(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner,"getDuckPropertiesTest/duckPropertiesDefault.json");
-            extractIdFromResponse(runner);
-            swim(runner, "${id}");
-            validateResponse(runner, HttpStatus.OK, "swimDuckTest/swimSuccess.json");
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, "getDuckPropertiesTest/duckPropertiesDefault.json");
+        extractIdFromResponse(runner);
+        swim(runner, "${id}");
+        validateResponse(runner, HttpStatus.OK, "swimDuckTest/swimSuccess.json");
     }
 }

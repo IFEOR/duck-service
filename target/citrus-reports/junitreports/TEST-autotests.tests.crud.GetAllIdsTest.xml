@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="autotests.tests.crud.GetAllIdsTest" time="0.0" tests="4" errors="0" skipped="0" failures="0">
-    <testcase name="GetAllIdsTest.getFewIdsTest" classname="autotests.tests.crud.GetAllIdsTest" time="0.0"/>
-    <testcase name="GetAllIdsTest.getIdTest" classname="autotests.tests.crud.GetAllIdsTest" time="0.0"/>
-    <testcase name="GetAllIdsTest.getIdTest" classname="autotests.tests.crud.GetAllIdsTest" time="0.0"/>
-    <testcase name="GetAllIdsTest.getNoIdTest" classname="autotests.tests.crud.GetAllIdsTest" time="0.0"/>
-</testsuite>

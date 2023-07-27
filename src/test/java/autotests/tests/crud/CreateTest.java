@@ -18,45 +18,33 @@ public class CreateTest extends DuckCrudClient {
             invocationCount = 2)
     @CitrusTest
     public void createdDefault(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner, duckDefault);
-            validateResponseWithIdExtraction(runner, HttpStatus.OK, "createDuckTest/createDefault.json");
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, duckDefault);
+        validateResponseWithIdExtraction(runner, HttpStatus.OK, "createDuckTest/createDefault.json");
     }
 
     @Test(description = "Проверка, что уточка с нулевой высотой не создаётся", priority = 1)
     @CitrusTest
     public void notCreatedZeroHeight(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner, duckDefault.height(0.0));
-            validateResponseWithIdExtraction(runner, HttpStatus.BAD_REQUEST, "incorrectHeightMessage.json");
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, duckDefault.height(0.0));
+        validateResponseWithIdExtraction(runner, HttpStatus.BAD_REQUEST, "incorrectHeightMessage.json");
     }
 
     @Test(description = "Проверка, что уточка с невалидным звуком не создаётся", priority = 1)
     @CitrusTest
     public void notCreatedInvalidSound(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner, duckDefault.sound("meow"));
-            validateResponseWithIdExtraction(runner, HttpStatus.BAD_REQUEST, "incorrectSoundMessage.json");
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, duckDefault.sound("meow"));
+        validateResponseWithIdExtraction(runner, HttpStatus.BAD_REQUEST, "incorrectSoundMessage.json");
     }
 
     @Test(description = "Проверка, что уточка без параметров создаётся с параметрами по-умолчанию", priority = 1)
     @CitrusTest
     public void createdEmpty(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner, new Duck());
-            validateResponseWithIdExtraction(runner, HttpStatus.OK, "createDuckTest/createEmpty.json");
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, new Duck());
+        validateResponseWithIdExtraction(runner, HttpStatus.OK, "createDuckTest/createEmpty.json");
     }
 
     @DataProvider(name = "duckSuccessfulList")
@@ -84,30 +72,24 @@ public class CreateTest extends DuckCrudClient {
     @CitrusTest
     @CitrusParameters({"payload", "runner"})
     public void createdList(Duck duck, @Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner, duck);
-            validateResponseByStringWithIdExtraction(runner, HttpStatus.OK, "{\n" +
-                    "  \"id\": ${id},\n" +
-                    "  \"color\": \"" + duck.color() + "\",\n" +
-                    "  \"height\": " + duck.height() + ",\n" +
-                    "  \"material\": \"" + duck.material() + "\",\n" +
-                    "  \"sound\": \"" + duck.sound() + "\",\n" +
-                    "  \"wingsState\": \"" + duck.wingsState() + "\"\n" +
-                    "}");
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, duck);
+        validateResponseByStringWithIdExtraction(runner, HttpStatus.OK, "{\n" +
+                "  \"id\": ${id},\n" +
+                "  \"color\": \"" + duck.color() + "\",\n" +
+                "  \"height\": " + duck.height() + ",\n" +
+                "  \"material\": \"" + duck.material() + "\",\n" +
+                "  \"sound\": \"" + duck.sound() + "\",\n" +
+                "  \"wingsState\": \"" + duck.wingsState() + "\"\n" +
+                "}");
     }
 
     @Test(description = "Проверка, что часть уточек из списка создаётся, а часть не создаётся", dataProvider = "duckMixedList")
     @CitrusTest
     @CitrusParameters({"payload", "response", "status", "runner"})
     public void partiallyCreatedList(Object payload, String response, HttpStatus status, @Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner, payload);
-            validateResponseWithIdExtraction(runner, status, response);
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, payload);
+        validateResponseWithIdExtraction(runner, status, response);
     }
 }

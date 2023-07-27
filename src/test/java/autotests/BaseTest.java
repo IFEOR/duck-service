@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Map;
 
+import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
 import static com.consol.citrus.http.actions.HttpActionBuilder.http;
 import static com.consol.citrus.validation.DelegatingPayloadVariableExtractor.Builder.fromBody;
 import static java.util.Map.entry;
@@ -175,13 +176,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
     //region Экстракторы
 
     protected void extractIdFromResponse(TestCaseRunner runner) {
-        runner.$(http().client(duckService)
-                .receive()
-                .response(HttpStatus.OK)
-                .message()
-                .type(MessageType.JSON)
-                .extract(fromBody().expression("$.id", "id"))
-        );
+        extractDataFromResponse(runner, "$.id", "id");
     }
 
     protected void extractDuckPropertiesFromResponse(TestCaseRunner runner) {
@@ -213,4 +208,21 @@ public class BaseTest extends TestNGCitrusSpringSupport {
 
     //endregion
 
+    protected void finallyDuckDelete(TestCaseRunner runner) {
+        runner.variable("${id}", "");
+        runner.$(doFinally().actions(runner.$(http().client(duckService)
+                .send()
+                .delete("/api/duck/delete")
+                .queryParam("id", "${id}")))
+        );
+    }
+
+    protected void finallyDuckDelete(TestCaseRunner runner, String variableName) {
+        runner.variable(variableName, "");
+        runner.$(doFinally().actions(runner.$(http().client(duckService)
+                .send()
+                .delete("/api/duck/delete")
+                .queryParam("id", variableName)))
+        );
+    }
 }

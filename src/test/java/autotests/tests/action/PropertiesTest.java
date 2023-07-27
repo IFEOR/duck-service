@@ -14,27 +14,21 @@ public class PropertiesTest extends DuckActionClient {
             priority = 1)
     @CitrusTest
     public void propertiesDefault(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner, duckDefault);
-            extractIdFromResponse(runner);
-            properties(runner, "${id}");
-            validateResponse(runner, HttpStatus.OK, duckDefault);
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, duckDefault);
+        extractIdFromResponse(runner);
+        properties(runner, "${id}");
+        validateResponse(runner, HttpStatus.OK, duckDefault);
     }
 
     @Test(description = "Проверка, что деревянная уточка с валидным id (существующая в БД уточка) передаёт верную информацию о себе",
             priority = 1)
     @CitrusTest
     public void propertiesWoodMaterial(@Optional @CitrusResource TestCaseRunner runner) {
-        try {
-            create(runner, duckWood);
-            extractIdFromResponse(runner);
-            properties(runner, "${id}");
-            validateResponse(runner, HttpStatus.OK, duckWood);
-        } finally {
-            delete(runner, "${id}");
-        }
+        finallyDuckDelete(runner);
+        create(runner, duckWood);
+        extractIdFromResponse(runner);
+        properties(runner, "${id}");
+        validateResponse(runner, HttpStatus.OK, duckWood);
     }
 }
