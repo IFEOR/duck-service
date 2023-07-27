@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Description;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Map;
@@ -27,6 +28,9 @@ public class BaseTest extends TestNGCitrusSpringSupport {
 
     @Autowired
     protected HttpClient duckService;
+
+    @Autowired
+    protected SingleConnectionDataSource testDatabase;
 
     protected Duck duckDefault = new Duck().color("yellow").height(5.0).material("rubber").sound("quack").wingsState("ACTIVE");
     protected Duck duckWood = new Duck().color("yellow").height(5.0).material("wood").sound("quack").wingsState("ACTIVE");
