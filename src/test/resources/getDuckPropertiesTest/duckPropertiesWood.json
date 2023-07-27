@@ -1,6 +1,6 @@
 {
   "color": "yellow",
-  "height": 2.5,
+  "height": 5.0,
   "material": "wood",
   "sound": "quack",
   "wingsState": "ACTIVE"
