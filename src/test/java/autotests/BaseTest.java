@@ -38,7 +38,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
     @Autowired
     protected SingleConnectionDataSource testDatabase;
 
-    protected AtomicInteger uniqueId = new AtomicInteger(0);
+    protected AtomicInteger uniqueId = new AtomicInteger(1000);
 
     protected Duck duckDefault = new Duck().color("yellow").height(5.0).material("rubber").sound("quack").wingsState("ACTIVE");
     protected Duck duckWood = new Duck().color("yellow").height(5.0).material("wood").sound("quack").wingsState("ACTIVE");
@@ -220,22 +220,7 @@ public class BaseTest extends TestNGCitrusSpringSupport {
 
     //endregion
 
-    protected void getId(TestCaseRunner runner) {
-        try {
-            runner.$(query(testDatabase)
-                    .statement("SELECT * FROM DUCK ORDER BY id DESC")
-                    .extract("id", "maxId")
-            );
-            runner.$(action(context -> {
-                uniqueId.set(Integer.parseInt(context.getVariable("${maxId}")));
-            }));
-        } catch (TestCaseFailedException e) {
-            runner.$(echo("Database is empty. No need to define id. Indexing will start from 1"));
-        }
-    }
-
     protected void createTestDuck(TestCaseRunner runner, Duck duck) {
-        if (uniqueId.get() == 0) getId(runner);
         runner.$(sql(testDatabase)
                 .statement("INSERT INTO DUCK (id, color, height, material, sound, wings_State) \n" +
                         "\tVALUES (" +
