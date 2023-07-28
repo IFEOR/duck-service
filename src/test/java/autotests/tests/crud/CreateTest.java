@@ -21,6 +21,7 @@ public class CreateTest extends DuckCrudClient {
         finallyDuckDelete(runner);
         create(runner, duckDefault);
         validateResponseWithIdExtraction(runner, HttpStatus.OK, "createDuckTest/createDefault.json");
+        validateDuckInDatabase(runner, "${duckId}", duckDefault);
     }
 
     @Test(description = "Проверка, что уточка с нулевой высотой не создаётся", priority = 1)
@@ -29,6 +30,7 @@ public class CreateTest extends DuckCrudClient {
         finallyDuckDelete(runner);
         create(runner, duckDefault.height(0.0));
         validateResponseWithIdExtraction(runner, HttpStatus.BAD_REQUEST, "incorrectHeightMessage.json");
+        validateDuckInDatabase(runner, "${duckId}", duckDefault.height(0.0));
     }
 
     @Test(description = "Проверка, что уточка с невалидным звуком не создаётся", priority = 1)
@@ -37,6 +39,7 @@ public class CreateTest extends DuckCrudClient {
         finallyDuckDelete(runner);
         create(runner, duckDefault.sound("meow"));
         validateResponseWithIdExtraction(runner, HttpStatus.BAD_REQUEST, "incorrectSoundMessage.json");
+        validateDuckInDatabase(runner, "${duckId}", duckDefault.sound("meow"));
     }
 
     @Test(description = "Проверка, что уточка без параметров создаётся с параметрами по-умолчанию", priority = 1)
@@ -45,6 +48,13 @@ public class CreateTest extends DuckCrudClient {
         finallyDuckDelete(runner);
         create(runner, new Duck());
         validateResponseWithIdExtraction(runner, HttpStatus.OK, "createDuckTest/createEmpty.json");
+        validateDuckInDatabase(runner, "${duckId}", new Duck()
+                .color("")
+                .height(0.0)
+                .material("")
+                .sound("")
+                .wingsState("UNDEFINED")
+        );
     }
 
     @DataProvider(name = "duckSuccessfulList")
@@ -75,13 +85,14 @@ public class CreateTest extends DuckCrudClient {
         finallyDuckDelete(runner);
         create(runner, duck);
         validateResponseByStringWithIdExtraction(runner, HttpStatus.OK, "{\n" +
-                "  \"id\": ${id},\n" +
+                "  \"id\": ${duckId},\n" +
                 "  \"color\": \"" + duck.color() + "\",\n" +
                 "  \"height\": " + duck.height() + ",\n" +
                 "  \"material\": \"" + duck.material() + "\",\n" +
                 "  \"sound\": \"" + duck.sound() + "\",\n" +
                 "  \"wingsState\": \"" + duck.wingsState() + "\"\n" +
                 "}");
+        validateDuckInDatabase(runner, "${duckId}", duck);
     }
 
     @Test(description = "Проверка, что часть уточек из списка создаётся, а часть не создаётся", dataProvider = "duckMixedList")
@@ -91,5 +102,6 @@ public class CreateTest extends DuckCrudClient {
         finallyDuckDelete(runner);
         create(runner, payload);
         validateResponseWithIdExtraction(runner, status, response);
+        validateDuckInDatabase(runner, "${duckId}", (Duck) payload);
     }
 }
