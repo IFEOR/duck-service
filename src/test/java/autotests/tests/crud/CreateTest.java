@@ -6,16 +6,21 @@ import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.testng.CitrusParameters;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Flaky;
 import org.springframework.http.HttpStatus;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Test;
 
+@Epic("Класс тестов для создания уточки")
 public class CreateTest extends DuckCrudClient {
 
-    @Test(description = "Проверка, что уточка со всеми валидными свойствами создаётся",
+    @Test(description = "Уточка создаётся",
             priority = 1,
             invocationCount = 2)
+    @Description("Проверка, что уточка со всеми валидными свойствами создаётся")
     @CitrusTest
     public void createdDefault(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
@@ -24,7 +29,9 @@ public class CreateTest extends DuckCrudClient {
         validateDuckInDatabase(runner, "${duckId}", duckDefault);
     }
 
-    @Test(description = "Проверка, что уточка с нулевой высотой не создаётся", priority = 1)
+    @Flaky
+    @Test(description = "Уточка с нулевой высотой не создаётся", priority = 1)
+    @Description("Проверка, что уточка с нулевой высотой не создаётся")
     @CitrusTest
     public void notCreatedZeroHeight(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
@@ -33,7 +40,9 @@ public class CreateTest extends DuckCrudClient {
         validateDuckInDatabase(runner, "${duckId}", duckDefault.height(0.0));
     }
 
-    @Test(description = "Проверка, что уточка с невалидным звуком не создаётся", priority = 1)
+    @Flaky
+    @Test(description = "Уточка с невалидным звуком не создаётся", priority = 1)
+    @Description("Проверка, что уточка с невалидным звуком не создаётся")
     @CitrusTest
     public void notCreatedInvalidSound(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
@@ -42,7 +51,8 @@ public class CreateTest extends DuckCrudClient {
         validateDuckInDatabase(runner, "${duckId}", duckDefault.sound("meow"));
     }
 
-    @Test(description = "Проверка, что уточка без параметров создаётся с параметрами по-умолчанию", priority = 1)
+    @Test(description = "Уточка создаётся с параметрами по-умолчанию", priority = 1)
+    @Description("Проверка, что уточка без параметров создаётся с параметрами по-умолчанию")
     @CitrusTest
     public void createdEmpty(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
@@ -78,7 +88,8 @@ public class CreateTest extends DuckCrudClient {
         };
     }
 
-    @Test(description = "Проверка, что создаётся список уточек", dataProvider = "duckSuccessfulList")
+    @Test(description = "Создаётся список разных уточек", dataProvider = "duckSuccessfulList")
+    @Description("Проверка, что создаётся список уточек")
     @CitrusTest
     @CitrusParameters({"payload", "runner"})
     public void createdList(Duck duck, @Optional @CitrusResource TestCaseRunner runner) {
@@ -95,7 +106,9 @@ public class CreateTest extends DuckCrudClient {
         validateDuckInDatabase(runner, "${duckId}", duck);
     }
 
-    @Test(description = "Проверка, что часть уточек из списка создаётся, а часть не создаётся", dataProvider = "duckMixedList")
+    @Flaky
+    @Test(description = "Валидные уточки создаются, а невалидные - нет", dataProvider = "duckMixedList")
+    @Description("Проверка, что часть уточек из списка создаётся, а часть не создаётся")
     @CitrusTest
     @CitrusParameters({"payload", "response", "status", "runner"})
     public void partiallyCreatedList(Object payload, String response, HttpStatus status, @Optional @CitrusResource TestCaseRunner runner) {
