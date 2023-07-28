@@ -2,6 +2,7 @@ package autotests;
 
 import autotests.payloads.Duck;
 import com.consol.citrus.TestCaseRunner;
+import com.consol.citrus.exceptions.TestCaseFailedException;
 import com.consol.citrus.http.client.HttpClient;
 import com.consol.citrus.message.MessageType;
 import com.consol.citrus.message.builder.ObjectMappingPayloadBuilder;
@@ -20,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.consol.citrus.DefaultTestActionBuilder.action;
+import static com.consol.citrus.actions.EchoAction.Builder.echo;
 import static com.consol.citrus.actions.ExecuteSQLAction.Builder.sql;
 import static com.consol.citrus.actions.ExecuteSQLQueryAction.Builder.query;
 import static com.consol.citrus.container.FinallySequence.Builder.doFinally;
@@ -219,13 +221,17 @@ public class BaseTest extends TestNGCitrusSpringSupport {
     //endregion
 
     protected void getId(TestCaseRunner runner) {
-        runner.$(query(testDatabase)
-                .statement("SELECT * FROM DUCK ORDER BY id DESC")
-                .extract("id", "maxId")
-        );
-        runner.$(action(context -> {
-            uniqueId.set(Integer.parseInt(context.getVariable("${maxId}")));
-        }));
+        try {
+            runner.$(query(testDatabase)
+                    .statement("SELECT * FROM DUCK ORDER BY id DESC")
+                    .extract("id", "maxId")
+            );
+            runner.$(action(context -> {
+                uniqueId.set(Integer.parseInt(context.getVariable("${maxId}")));
+            }));
+        } catch (TestCaseFailedException e) {
+            runner.$(echo("Database is empty. No need to define id. Indexing will start from 1"));
+        }
     }
 
     protected void createTestDuck(TestCaseRunner runner, Duck duck) {
