@@ -4,12 +4,16 @@ import autotests.clients.DuckCrudClient;
 import com.consol.citrus.TestCaseRunner;
 import com.consol.citrus.annotations.CitrusResource;
 import com.consol.citrus.annotations.CitrusTest;
+import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
 import org.springframework.http.HttpStatus;
 import org.testng.annotations.*;
 
+@Epic("Класс тестов для получения списка id уточек")
 public class GetAllIdsTest extends DuckCrudClient {
 
-    @Test(description = "Проверка, что отображается список нескольких уточек", priority = 1)
+    @Test(description = "Отображается список id уточек", priority = 1)
+    @Description("Проверка, что отображается список нескольких уточек")
     @CitrusTest
     public void getFewIdsTest(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner, "${id1}");
@@ -26,9 +30,10 @@ public class GetAllIdsTest extends DuckCrudClient {
         validateResponseByString(runner, HttpStatus.OK, "[${id1},${id2},${id3}]");
     }
 
-    @Test(description = "Проверка, что отображается список с одной уточкой",
+    @Test(description = "Отображается список c 1й уточкой",
             priority = 1,
             invocationCount = 2)
+    @Description("Проверка, что отображается список с одной уточкой")
     @CitrusTest
     public void getIdTest(@Optional @CitrusResource TestCaseRunner runner) {
         finallyDuckDelete(runner);
@@ -39,7 +44,8 @@ public class GetAllIdsTest extends DuckCrudClient {
         validateResponseByString(runner, HttpStatus.OK, "[${duckId}]");
     }
 
-    @Test(description = "Проверка, что отображается пустой список при отсутствии уточек", priority = 1)
+    @Test(description = "Отображается пустой список", priority = 1)
+    @Description("Проверка, что отображается пустой список при отсутствии уточек")
     @CitrusTest
     public void getNoIdTest(@Optional @CitrusResource TestCaseRunner runner) {
         CleanDB(runner);
